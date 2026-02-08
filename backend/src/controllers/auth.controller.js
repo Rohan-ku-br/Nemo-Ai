@@ -40,9 +40,9 @@ async function registerUser(req, res){
 async function loginUser(req, res){
     const {email, password} = req.body;
 
-    isEmailExist = await userModel.findOne({email})
+    user = await userModel.findOne({email})
 
-    if(!isEmailExist){
+    if(!user){
         return res.status(401).json({
             message:"envalid email or password!"
         })
