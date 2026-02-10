@@ -40,6 +40,12 @@ function initSocketServer(httpServer) {
                 role: "user"
             })
 
+            const chatHistory = await messageModel.find({
+                chat: messagePayLoad.chat
+            })
+            console.log('chat history', chatHistory);
+            
+
             const response = await generateResponse(messagePayLoad.content)
 
             await messageModel.create({
