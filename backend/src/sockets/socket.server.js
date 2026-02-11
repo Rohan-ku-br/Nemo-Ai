@@ -34,30 +34,34 @@ function initSocketServer(httpServer) {
         socket.on("Ai-message", async (messagePayLoad) => {
 
             await messageModel.create({
-                chat: messagePayLoad.chat,
+                chat: messagePayLoad.chats,
                 user: socket.user._id,
                 content: messagePayLoad.content,
                 role: "user"
             })
 
             const chatHistory = await messageModel.find({
-                chat: messagePayLoad.chat
+                chat: messagePayLoad.chats
             })
-            console.log('chat history', chatHistory);
-            
 
-            const response = await generateResponse(messagePayLoad.content)
+            const response = await generateResponse( chatHistory
+                .map(item => ({
+                    role: item.role,
+                    parts: [{ text: item.content }]
+                })));
+
+
 
             await messageModel.create({
-                chat: messagePayLoad.chat,
+                chat: messagePayLoad.chats,
                 user: socket.user._id,
-                constent: response,
+                content: response,
                 role: "model"
             })
 
             socket.emit("Ai-response", {
                 content: response,
-                chat: messagePayLoad.chat
+                chat: messagePayLoad.chats
             })
         })
     })
