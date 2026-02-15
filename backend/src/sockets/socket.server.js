@@ -29,6 +29,7 @@ function initSocketServer(httpServer) {
         }
     })
 
+    // use Socket.io
     io.on("connection", (socket) => {
 
         socket.on("Ai-message", async (messagePayLoad) => {
