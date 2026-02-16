@@ -13,7 +13,7 @@ async function createMemory({ vectors, metadata, messageId }) {
     }])
 }
 
-async function queryMemory({ queryVector, limit=5, metadata}){
+async function queryMemory({ queryVector, limit = 5, metadata}){
     const data = await nemoAiIndex.query({
         vector: queryVector,
         topK: limit,

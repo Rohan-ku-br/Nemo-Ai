@@ -5,7 +5,6 @@ const { GoogleGenAI } = require("@google/genai");
 const ai = new GoogleGenAI({});
 
 async function generateResponse(content) {
-
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: content
@@ -22,6 +21,10 @@ async function generateVector(content) {
       outputDimensionality: 768
     }
   })
+
+  if (!response.embeddings || response.embeddings.length === 0) {
+    throw new Error("No embedding generated")
+  }
 
   return response.embeddings[0].values
 }

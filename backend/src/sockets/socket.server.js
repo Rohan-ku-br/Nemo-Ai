@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const userModel = require('../models/user.model')
 const {generateResponse, generateVector} = require('../services/ai.service')
 const messageModel = require('../models/message.model')
-const { createMemory } = require('../services/vector.service')
+const { createMemory, queryMemory } = require('../services/vector.service')
  
 function initSocketServer(httpServer) {
 
@@ -49,7 +49,7 @@ function initSocketServer(httpServer) {
             const vectors = await generateVector(messagePayLoad.content)
             await createMemory({
                 vectors,
-                messageId: "35432443",
+                messageId: "73847834",
                 metadata:{
                     chat: messagePayLoad.chats,
                     user: socket.user._id
