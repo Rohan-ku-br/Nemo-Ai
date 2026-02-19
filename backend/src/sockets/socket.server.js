@@ -2,10 +2,10 @@ const { Server } = require('socket.io')
 const cookie = require('cookie')
 const jwt = require('jsonwebtoken')
 const userModel = require('../models/user.model')
-const {generateResponse, generateVector} = require('../services/ai.service')
+const { generateResponse, generateVector } = require('../services/ai.service')
 const messageModel = require('../models/message.model')
 const { createMemory, queryMemory } = require('../services/vector.service')
- 
+
 function initSocketServer(httpServer) {
 
     const io = new Server(httpServer, {})
@@ -33,7 +33,7 @@ function initSocketServer(httpServer) {
     // use Socket.io
     io.on("connection", (socket) => {
 
-        socket.on("Ai-message", async (messagePayLoad) => {
+        socket.on("ai-message", async (messagePayLoad) => {
 
             // await messageModel.create({
             //     chat: messagePayLoad.chats,
@@ -42,26 +42,28 @@ function initSocketServer(httpServer) {
             //     role: "user"
             // })
 
-            const chatHistory = await messageModel.find({
-                chat: messagePayLoad.chats
-            })
 
             const vectors = await generateVector(messagePayLoad.content)
             await createMemory({
                 vectors,
-                messageId: "73847834",
-                metadata:{
+                messageId: "7384788452285434",
+                metadata: {
                     chat: messagePayLoad.chats,
                     user: socket.user._id
                 }
             })
-            
 
-            const response = await generateResponse( chatHistory
-                .map(item => ({
-                    role: item.role,
-                    parts: [{ text: item.content }]
-                })));
+            const chatHistory = (await messageModel.find({
+                chat: messagePayLoad.chats
+            }).sort({ createdAt: -1 }).limit(20).lean()).reverse()
+
+            const response = await generateResponse(chatHistory
+                .map(item => {
+                    return {
+                        role: item.role,
+                        parts: [{ text: item.content }]
+                    }
+                }));
 
 
 
@@ -72,7 +74,7 @@ function initSocketServer(httpServer) {
             //     role: "model"
             // })
 
-            socket.emit("Ai-response", {
+            socket.emit("ai-response", {
                 content: response,
                 chat: messagePayLoad.chats
             })

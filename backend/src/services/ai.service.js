@@ -1,7 +1,5 @@
 const { GoogleGenAI } = require("@google/genai");
 
-// The client gets the API key from the environment variable `GEMINI_API_KEY`.
-
 const ai = new GoogleGenAI({});
 
 async function generateResponse(content) {
@@ -15,16 +13,13 @@ async function generateResponse(content) {
 
 async function generateVector(content) {
   const response = await ai.models.embedContent({
-    model: "gemini-embedding-001",
+    model: 'gemini-embedding-001',
     contents: content,
     config: {
-      outputDimensionality: 768
+      outputDimensionality: 768,
     }
   })
-
-  if (!response.embeddings || response.embeddings.length === 0) {
-    throw new Error("No embedding generated")
-  }
+  console.log('debugs vector :-', response);
 
   return response.embeddings[0].values
 }
